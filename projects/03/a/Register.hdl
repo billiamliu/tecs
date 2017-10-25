@@ -15,4 +15,56 @@ CHIP Register {
 
     PARTS:
     // Put your code here:
+    Mux16(
+      a[0]=o0,
+      a[1]=o1,
+      a[2]=o2,
+      a[3]=o3,
+      a[4]=o4,
+      a[5]=o5,
+      a[6]=o6,
+      a[7]=o7,
+      a[8]=o8,
+      a[9]=o9,
+      a[10]=o10,
+      a[11]=o11,
+      a[12]=o12,
+      a[13]=o13,
+      a[14]=o14,
+      a[15]=o15,
+      b=in,
+      sel=load,
+      out[0]=m0,
+      out[1]=m1,
+      out[2]=m2,
+      out[3]=m3,
+      out[4]=m4,
+      out[5]=m5,
+      out[6]=m6,
+      out[7]=m7,
+      out[8]=m8,
+      out[9]=m9,
+      out[10]=m10,
+      out[11]=m11,
+      out[12]=m12,
+      out[13]=m13,
+      out[14]=m14,
+      out[15]=m15
+    );
+    DFF(in=m0, out=o0, out=out[0]);
+    DFF(in=m1, out=o1, out=out[1]);
+    DFF(in=m2, out=o2, out=out[2]);
+    DFF(in=m3, out=o3, out=out[3]);
+    DFF(in=m4, out=o4, out=out[4]);
+    DFF(in=m5, out=o5, out=out[5]);
+    DFF(in=m6, out=o6, out=out[6]);
+    DFF(in=m7, out=o7, out=out[7]);
+    DFF(in=m8, out=o8, out=out[8]);
+    DFF(in=m9, out=o9, out=out[9]);
+    DFF(in=m10, out=o10, out=out[10]);
+    DFF(in=m11, out=o11, out=out[11]);
+    DFF(in=m12, out=o12, out=out[12]);
+    DFF(in=m13, out=o13, out=out[13]);
+    DFF(in=m14, out=o14, out=out[14]);
+    DFF(in=m15, out=o15, out=out[15]);
 }

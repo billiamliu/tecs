@@ -27,5 +27,21 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // LOAD PICKER
+    // RAM: 0-1(x14), KBD: 110(x13), SCREEN: 10(x14)-101(x13)
+    // MSB determines whether RAM or IO
+    DMux(sel=address[14], in=load, a=ramLoad, b=ioLoad);
+    RAM16K(in=in, load=ramLoad, address=address[0..13], out=ramOut);
+
+    // LOAD PICKER IO (keyboard unused)
+    // KBD: 11... SCREEN: 10...
+    DMux(sel=address[13], in=ioLoad, a=screenLoad); // b is unused
+    Screen(in=in, load=screenLoad, address=address[0..12], out=screenOut);
+    Keyboard(out=keyboardOut);
+
+    // DATA PICKER IO
+    Mux16(a=screenOut, b=keyboardOut, sel=address[13], out=ioOut);
+
+    // DATA PICKER
+    Mux16(a=ramOut, b=ioOut, sel=address[14], out=out);
 }

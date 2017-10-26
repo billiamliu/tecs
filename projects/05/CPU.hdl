@@ -40,4 +40,69 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
+
+    And(a=instruction[15], b=instruction[3], out=writeM);
+
+    ALU(
+      x=Dout,
+      y=AMout,
+      // internal
+      out=ALUout,
+      // external
+      out=outM,
+      ng=ng,
+      zr=zr,
+      // C pins
+      zx=instruction[11],
+      nx=instruction[10],
+      zy=instruction[9],
+      ny=instruction[8],
+      f=instruction[7],
+      no=instruction[6]
+    );
+
+    // D Register
+    And(a=instruction[4], b=instruction[15], out=storeD);
+    DRegister(in=ALUout, out=Dout, load=storeD);
+
+    // A Register
+
+    // ALU Mux
+    Mux16(a=Aout, b=inM, sel=instruction[12], out=AMout);
+
+    Not(in=instruction[15], out=ACnegate);
+    And(a=instruction[5], b=instruction[15], out=storeApre);
+    Or(a=storeApre, b=ACnegate, out=storeA);
+
+    // A Mux
+    Mux16(
+      a=ALUout,
+      b=instruction,
+      sel=ACnegate,
+      out=Anew
+    );
+    ARegister(
+      in=Anew,
+      out=Aout,
+      out[0..14]=addressM,
+      load=storeA
+    );
+
+    // PC Controls
+
+    PC(in=Aout, load=PCload, reset=reset, inc=true, out[0..14]=pc);
+
+    Not(in=zr, out=zrN);
+    Not(in=ng, out=ngN);
+
+    And(a=zrN, b=ngN, out=JGTpre);
+    And(a=instruction[0], b=JGTpre, out=JGT);
+
+    And(a=zr, b=instruction[1], out=JEQ);
+    Or(a=JEQ, b=JGT, out=loadPre);
+    
+    And(a=ng, b=instruction[2], out=JLT);
+    Or(a=JLT, b=loadPre, out=loadPrePre);
+
+    And(a=loadPrePre, b=instruction[15], out=PCload);
 }

@@ -1,13 +1,7 @@
-const fs = require('fs')
-
 module.exports = main
 
-function main(fileName) {
-  return fs.readFileSync(fileName, {encoding: 'utf8'})
-    .split('\n')
-    .map(l => l.replace(/\/\/.*/, ''))
-    .map(l => l.trim())
-    .filter(l => l)
+function main(code) {
+  return code
     .map(categorise)
     .map(construct)
 }
@@ -30,8 +24,8 @@ function construct([category, data]) {
     case 'A':
       return {category, symbol: data}
     case 'J':
-      const [_, register, jump] = data.match(/(.*);(.*)/)
-      return {category, register, jump}
+      const [_, symbol, jump] = data.match(/(.*);(.*)/)
+      return {category, symbol, jump}
     case 'C':
       const [__, dest, comp] = data.match(/(.*)=(.*)/) || [null, '', null]
       return {category, dest: dest.split(''), comp}

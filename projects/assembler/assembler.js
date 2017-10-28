@@ -5,11 +5,11 @@ const symbolTable = require('./symbol-table')
 const translator = require('./translator')
 const parser = require('./parser')
 
-const fileName = process.argv[2]
+const filePath = process.argv[2]
 
-if (fileName) {
+if (filePath) {
   const codeStr = fs
-    .readFileSync(fileName, {encoding: 'utf8'})
+    .readFileSync(filePath, {encoding: 'utf8'})
     .split('\n')
     .map(l => l.replace(/\/\/.*/, ''))
     .map(l => l.trim())
@@ -19,7 +19,7 @@ if (fileName) {
   const binary = translator(instructionLookup, symbolTable, rawCode)
 
   display(codeStr, binary)
-  writeToDisk(fileName, binary)
+  writeToDisk(filePath, binary)
 } else {
   console.log('Must supply a file name to assemble')
 }
@@ -38,8 +38,8 @@ function display(raw, bin) {
 }
 
 function writeToDisk(src, code) {
-  const fileName = src.split('.')[0]
-  fs.writeFileSync(fileName + '.hack', prepCodeForWrite(code))
+  const dest = src.replace(/\.asm$/, '.hack')
+  fs.writeFileSync(dest, prepCodeForWrite(code))
 }
 
 function prepCodeForWrite(code) {

@@ -24,14 +24,18 @@ const varAddress = (function * () {
 
 // Public
 
-function addEntry({category, symbol}, address) {
+function addEntry({category, symbol}, address = null) {
   if (category === 'L') {
     return addLabel(symbol, address)
   }
 
+  if (category === 'A' && directAddress(symbol) !== undefined) {
+    return
+  }
+
   if (category === 'A') {
     // E.g. @foo
-    return addVar(symbol, address)
+    return addVar(symbol)
   }
 
   throw new Error('Unknown category -- addEntry: ' + category)
@@ -41,8 +45,30 @@ function contains(symbol) {
   return Boolean(symbolTable[symbol])
 }
 
+function directAddress(symbol) {
+  if (symbol[0] === 'R' && /^\d+$/.test(symbol.slice(1))) {
+    return symbol.slice(1)
+  }
+
+  if (symbol === '0' || Number.parseInt(symbol, 10)) {
+    return symbol
+  }
+
+  return undefined
+}
+
 function getAddress(symbol) {
-  return symbolTable[symbol]
+  if (directAddress(symbol)) {
+    return addressToBinary(directAddress(symbol))
+  }
+
+  return addressToBinary(symbolTable[symbol])
+}
+
+function addressToBinary(addr) {
+  return Number(addr)
+    .toString(2)
+    .padStart(16, '0')
 }
 
 function showTable() {
@@ -51,7 +77,11 @@ function showTable() {
 // Private
 
 function addVar(sym) {
-  if (symbolTable[sym]) {
+  if (directAddress(sym)) {
+    return true
+  }
+
+  if (symbolTable[sym] !== undefined) {
     return true
   }
 
@@ -64,6 +94,6 @@ function addLabel(sym, addr) {
     throw new Error('Symbol already exists -- addLabel: ' + sym)
   }
 
-  symbolTable[sym] = addr + 1 // ROM address
+  symbolTable[sym] = addr // ROM address
   return true
 }

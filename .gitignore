@@ -1,0 +1,6 @@
+*.tst
+*.cmp
+*.out
+*.DS_Store
+*.swp
+tools/
